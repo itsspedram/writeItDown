@@ -94,18 +94,9 @@ Feel free to contribute to this project! All contributions are welcome.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Thanks to all the amazing open-source projects that made this possible
-- Special thanks to the Next.js team for their incredible framework
-- And to you, for using this app! 💖
 
 ---
 
-Made with 💖 and ☕ by [Your Name]
+Made with 💖 and ☕ by Pedram
 
 Happy Journaling! 📖✨
