@@ -128,6 +128,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Made with 💖 and ☕ by [Your Name]
+Made with 💖 and ☕ by Pedram
 
 Happy Journaling! 📖✨
