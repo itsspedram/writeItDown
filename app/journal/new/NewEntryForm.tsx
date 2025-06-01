@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
-export default function NewEntryForm() {
+interface NewEntryFormProps {
+  userId: string
+}
+
+export default function NewEntryForm({ userId }: NewEntryFormProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [mood, setMood] = useState('')
@@ -30,7 +34,7 @@ export default function NewEntryForm() {
           content,
           mood,
           imageUrl,
-          userId: user.id,
+          userId,
         }),
       })
 
