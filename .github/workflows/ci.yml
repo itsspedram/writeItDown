@@ -15,39 +15,57 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js and install pnpm
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'pnpm'
 
+      # Step 3: Install pnpm
       - name: Install pnpm
-        run: npm install -g pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
 
-      # Step 3: Install project dependencies
+      # Step 4: Get pnpm store directory
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      # Step 5: Setup pnpm cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Step 6: Install project dependencies
       - name: Install dependencies
         run: pnpm install
 
-      # Step 4: Type checking
+      # Step 7: Type checking
       - name: TypeScript Check
         run: pnpm tsc --noEmit
 
-      # Step 5: Linting
+      # Step 8: Linting
       - name: Run ESLint
         run: pnpm lint
 
-      # Step 6: Validate Prisma schema
+      # Step 9: Validate Prisma schema
       - name: Prisma Schema Validate
         run: pnpm prisma validate
 
-      # Step 7: Run tests with coverage
+      # Step 10: Run tests with coverage
       - name: Run Jest Tests
         run: pnpm test -- --coverage
         env:
           CI: true
 
-      # Step 8: Upload coverage reports
+      # Step 11: Upload coverage reports
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
@@ -57,10 +75,10 @@ jobs:
           name: codecov-umbrella
           verbose: true
 
-      # Step 9: Build Next.js project
+      # Step 12: Build Next.js project
       - name: Build Application
         run: pnpm build
 
-      # Step 10: Audit for vulnerabilities
+      # Step 13: Audit for vulnerabilities
       - name: Audit Dependencies
         run: pnpm audit || true  # avoid failing the build for warnings only
