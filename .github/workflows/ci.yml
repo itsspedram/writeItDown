@@ -41,14 +41,26 @@ jobs:
       - name: Prisma Schema Validate
         run: pnpm prisma validate
 
-      # Step 7: Run tests
+      # Step 7: Run tests with coverage
       - name: Run Jest Tests
-        run: pnpm test
+        run: pnpm test -- --coverage
+        env:
+          CI: true
 
-      # Step 8: Build Next.js project
+      # Step 8: Upload coverage reports
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          flags: unittests
+          name: codecov-umbrella
+          verbose: true
+
+      # Step 9: Build Next.js project
       - name: Build Application
         run: pnpm build
 
-      # Step 9: Audit for vulnerabilities
+      # Step 10: Audit for vulnerabilities
       - name: Audit Dependencies
         run: pnpm audit || true  # avoid failing the build for warnings only
