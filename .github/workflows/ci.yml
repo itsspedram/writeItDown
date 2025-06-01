@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js and install pnpm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: pnpm install
+
+      # Step 4: Type checking
+      - name: TypeScript Check
+        run: pnpm tsc --noEmit
+
+      # Step 5: Linting
+      - name: Run ESLint
+        run: pnpm lint
+
+      # Step 6: Validate Prisma schema
+      - name: Prisma Schema Validate
+        run: pnpm prisma validate
+
+      # Step 7: Run tests with coverage
+      - name: Run Jest Tests
+        run: pnpm test -- --coverage
+        env:
+          CI: true
+
+      # Step 8: Upload coverage reports
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          flags: unittests
+          name: codecov-umbrella
+          verbose: true
+
+      # Step 9: Build Next.js project
+      - name: Build Application
+        run: pnpm build
+
+      # Step 10: Audit for vulnerabilities
+      - name: Audit Dependencies
+        run: pnpm audit || true  # avoid failing the build for warnings only
